@@ -1,0 +1,46 @@
+
+spring:
+  application:
+    name: AirplaneAPIGateway
+
+  security:
+    user:
+      name: user
+      password: 123
+
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: Airplane-Service
+            uri: lb://AIRPLANE-SERVICE
+            predicates:
+              - Path=/airplane/**
+
+          - id: Airport-Service
+            uri: lb://AIRPORT-SERVICE
+            predicates:
+              - Path=/airport/**
+
+
+  datasource:
+    url: jdbc:mariadb://67.217.240.192:3306/AirplaneBackend
+    username: root
+    password: rohan@2008
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Use 'update' during development. For production, consider 'validate' or others.
+    show-sql: true # Display SQL statements in the logs
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+  # Optional: Configure connection pool
+  datasource.hikari:
+    maximum-pool-size: 10
+    minimum-idle: 5
+    idle-timeout: 30000
+    max-lifetime: 1800000
+    connection-timeout: 30000
+server:
+  port: 8000
