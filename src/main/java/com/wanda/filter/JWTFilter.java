@@ -97,13 +97,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
     }
 
-    /**
-     * Sends a customized error response.
-     *
-     * @param response HttpServletResponse object
-     * @param status   HTTP status code
-     * @param message  Custom error message
-     */
+
     private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json");
