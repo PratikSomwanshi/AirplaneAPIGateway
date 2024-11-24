@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -61,7 +62,7 @@ public class JWTFilter extends OncePerRequestFilter {
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 logger.warn("Missing or invalid Authorization header");
                 System.out.println("Missing or invalid Authorization header");
-                throw new CustomException("Missing or invalid Authorization header");
+                throw new CustomException("Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
             }
 
             String email = jwtService.extractEmail(authorizationHeader);
@@ -72,7 +73,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 CustomUserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 if (!email.equals(userDetails.getEmail())) {
-                    throw new CustomException("Invalid username or password");
+                    throw new CustomException("Invalid username or password", HttpStatus.UNAUTHORIZED);
                 }
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

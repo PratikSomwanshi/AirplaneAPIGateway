@@ -5,6 +5,7 @@ import com.wanda.utils.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -38,7 +39,7 @@ public class JWTService {
         }catch (Exception e) {
             e.printStackTrace();
 
-            throw new CustomException("no such alorithm present");
+            throw new CustomException("No such algorithm present", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,12 +65,12 @@ public class JWTService {
     public String extractEmail(String bearerToken) {
 
         if(bearerToken.isEmpty()){
-            throw new CustomException("token not found");
+            throw new CustomException("token not found", HttpStatus.UNAUTHORIZED);
         }
 
         if(!bearerToken.startsWith("Bearer")) {
             System.out.println(bearerToken);
-            throw new CustomException("invalid Bearer token");
+            throw new CustomException("invalid Bearer token", HttpStatus.UNAUTHORIZED);
         }
 
         String token = bearerToken.substring(7);
@@ -79,7 +80,7 @@ public class JWTService {
         System.out.println("email: " + email);
 
         if(!this.validateToken(token)){
-            throw new CustomException("Token was expired");
+            throw new CustomException("Token was expired", HttpStatus.UNAUTHORIZED);
         }
 
         return email;
@@ -101,12 +102,12 @@ public class JWTService {
                 .getPayload();
 
         }catch (SignatureException e){
-            throw new CustomException("token secrete was changed, can not parse token");
+            throw new CustomException("token secrete was changed, can not parse token", HttpStatus.UNAUTHORIZED);
         }catch (Exception e) {
             if(e.getMessage().isEmpty()){
-                throw new CustomException("invalid token");
+                throw new CustomException("invalid token", HttpStatus.UNAUTHORIZED);
             }
-            throw new CustomException(e.getMessage());
+            throw new CustomException(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 }

@@ -1,39 +1,35 @@
 package com.wanda.utils.response;
 
 
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
 public class ErrorResponse {
-    private int statusCode;
+    private Boolean status;
     private String message;
-    private String details;
+    private Explanation error;
+    private List<Object> data = new ArrayList<>();
 
-    public ErrorResponse(int statusCode, String message, String details) {
-        this.statusCode = statusCode;
-        this.message = message;
-        this.details = details;
+    public ErrorResponse(Boolean status,  String explanation) {
+        this.status = status;
+        this.message = "Something went wrong";
+        this.error = new Explanation(explanation);
     }
 
-    // Getters and setters
-    public int getStatusCode() {
-        return statusCode;
+
+}
+
+
+@Data
+class Explanation{
+    private String explanation;
+
+    public Explanation(String explanation){
+        this.explanation = explanation;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
 }

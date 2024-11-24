@@ -5,6 +5,7 @@ import com.wanda.entity.Users;
 import com.wanda.repository.RolesRepository;
 import com.wanda.repository.UserRepository;
 import com.wanda.utils.exception.CustomException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +51,7 @@ public class UserService {
         var existingUser = this.userRepository.findByEmail(user.getEmail());
 
         if(existingUser.isPresent()){
-            throw new CustomException("User already exists");
+            throw new CustomException("User already exists", HttpStatus.BAD_REQUEST);
         }
 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -88,6 +89,6 @@ public class UserService {
             return this.jwtService.generateToken(user);
         }
 
-        throw new CustomException("Invalid email or password");
+        throw new CustomException("Invalid email or password", HttpStatus.BAD_REQUEST);
     }
 }

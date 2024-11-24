@@ -13,23 +13,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> handleResourceNotFoundException(CustomException ex, WebRequest request) {
         ErrorResponse errorDetails = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                request.getDescription(false)
+                false,
+               ex.getMessage()
         );
 
         System.out.println("hadnled by global exception custom");
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDetails, ex.getStatusCode());
     }
 
     // Handle global exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {
         ErrorResponse errorDetails = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(),
-                request.getDescription(false)
+                false,
+                ex.getMessage()
         );
 
         System.out.println("hadnled by global exception");
