@@ -54,16 +54,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            logger.warn("Missing or invalid Authorization header");
-            System.out.println("Missing or invalid Authorization header");
-            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Authorization header is missing or invalid");
-            return;
-        }
 
-        // Extract token after "Bearer "
+
 
         try {
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                logger.warn("Missing or invalid Authorization header");
+                System.out.println("Missing or invalid Authorization header");
+                throw new CustomException("Missing or invalid Authorization header");
+            }
+
             String email = jwtService.extractEmail(authorizationHeader);
 
             System.out.println(email);
@@ -89,9 +89,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         } catch (CustomException e) {
             logger.error("Authentication failed: {}", e.getMessage());
+            System.out.println("Authentication failed: {}"+ e.getMessage());
             sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
         } catch (Exception e) {
             logger.error("Error processing JWT: {}", e.getMessage(), e);
+            System.out.println("Error processing JWT: {}"+ e.getMessage());
             sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "An error occurred while processing the JWT");
         }
     }

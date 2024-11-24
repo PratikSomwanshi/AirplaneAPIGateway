@@ -4,6 +4,7 @@ import com.wanda.entity.Users;
 import com.wanda.utils.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -51,7 +52,7 @@ public class JWTService {
                 .claims(claims)
                 .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 10))
+                .expiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .signWith(getKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -85,7 +86,7 @@ public class JWTService {
     }
 
     public Boolean validateToken(String token) {
-        return this.getClaims(token).getExpiration().before(new Date());
+        return this.getClaims(token).getExpiration().after(new Date());
     }
 
 
@@ -99,9 +100,13 @@ public class JWTService {
                 .parseSignedClaims(token)
                 .getPayload();
 
+        }catch (SignatureException e){
+            throw new CustomException("token secrete was changed, can not parse token");
         }catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException("invalid token " + e.getMessage());
+            if(e.getMessage().isEmpty()){
+                throw new CustomException("invalid token");
+            }
+            throw new CustomException(e.getMessage());
         }
     }
 }
