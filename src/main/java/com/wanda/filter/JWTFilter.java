@@ -19,9 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -110,11 +108,11 @@ public class JWTFilter extends OncePerRequestFilter {
         response.setStatus(status);
         response.setContentType("application/json");
 
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", status);
-        errorResponse.put("error", "Authentication Error");
-        errorResponse.put("message", message);
-        errorResponse.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> errorResponse = new LinkedHashMap<>();
+        errorResponse.put("status", false);
+        errorResponse.put("message", "Authentication Error");
+        errorResponse.put("error", message);
+        errorResponse.put("data", new ArrayList<>());
 
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);
         response.getWriter().write(jsonResponse);
